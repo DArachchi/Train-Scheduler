@@ -13,8 +13,13 @@ database = firebase.database();
 
 database.ref().on("child_added", function(snapshot) {
   var newTrain = snapshot.val();
+  var diffTime = moment().diff(moment(newTrain.firstTrain, "hh:mm"), "minutes");
+  var tRemainder = diffTime % newTrain.frequency;
+  var tMinutesTillTrain = newTrain.frequency - tRemainder;
+  var nextTrain = moment().add(tMinutesTillTrain, "minutes").format("hh:mm A");
 
-$('#table').append("<tr><td>" + newTrain.name + "</td><td>" + newTrain.destination + "</td><td>" + newTrain.frequency + "</td><td>" + "Next Arrival" + "</td><td>" + "Minutes Away" + "</td></tr>");
+
+$('#table').append("<tr><td>" + newTrain.name + "</td><td>" + newTrain.destination + "</td><td>" + newTrain.frequency + "</td><td>" + nextTrain + "</td><td>" + tMinutesTillTrain + "</td></tr>");
 });
 
 $("#submitButton").on("click", function(event) {
